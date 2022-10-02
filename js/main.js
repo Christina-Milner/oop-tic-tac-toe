@@ -1,3 +1,12 @@
+class Player {
+        constructor(name, type, symbol) {
+            this.name = name
+            this.type = type
+            this.symbol = symbol
+        }
+}
+
+
 class Game {
     constructor(gameType) {
         const once = {once: true}
@@ -18,13 +27,13 @@ class Game {
             let toss = Math.random()
             if (toss < 0.5) {
                 document.querySelector('h2').innerText = 'Computer goes first!'
-                this.player1 = 'Computer'
-                this.player2 = playerName
+                this.player1 = new Player("Computer", "AI", "X")
+                this.player2 = new Player (playerName, "human", "O")
             }
             else {
                 document.querySelector('h2').innerText = 'You go first!'
-                this.player1 = playerName
-                this.player2 = 'Computer'
+                this.player1 = new Player (playerName, "human", "X")
+                this.player2 = new Player("Computer", "AI", "O")
             }
         }
         else {
@@ -34,18 +43,18 @@ class Game {
             let toss = Math.random()
             if (toss < 0.5) {
                 document.querySelector('h2').innerText = `${playerName} goes first!`
-                this.player1 = playerName
-                this.player2 = playerName2
+                this.player1 = new Player (playerName, "human", "X")
+                this.player2 = new Player (playerName2, "human", "O")
             }
             else {
                 document.querySelector('h2').innerText = `${playerName2} goes first!`
-                this.player1 = playerName2
-                this.player2 = playerName
+                this.player1 = new Player (playerName2, "human", "X")
+                this.player2 = new Player (playerName, "human", "O")
             }
         }
         setTimeout(() => {
-            document.querySelector('h2').innerText = `${this.player1}'s turn`
-            if (this.player1 == 'Computer') {this.computerMove()}
+            document.querySelector('h2').innerText = `${this.player1.name}'s turn`
+            if (this.player1.type == 'AI') {this.computerMove()}
         }, 2000)
     }
 
@@ -64,17 +73,17 @@ class Game {
 
     playMove(event) {
         const idx = Array.prototype.indexOf.call(this.boxes, event.target)
-        const symbol = this.activePlayer == this.player1 ? "X" : "O"
+        const symbol = this.activePlayer.symbol
         event.target.innerText = symbol
         this.boxValues[idx] = symbol
         if (this.checkOutcome(symbol)) {return}
-        this.activePlayer = this.activePlayer == this.player1 ? this.player2 : this.player1
-        document.querySelector('h2').innerText = `${this.activePlayer}'s turn`
-        if (this.activePlayer == 'Computer') {this.computerMove()}
+        this.activePlayer = this.activePlayer.name == this.player1.name ? this.player2 : this.player1
+        document.querySelector('h2').innerText = `${this.activePlayer.name}'s turn`
+        if (this.activePlayer.type == 'AI') {this.computerMove()}
     }
 
     computerMove() {            
-        const symbol = this.activePlayer == this.player1 ? 'X' : 'O'
+        const symbol = this.activePlayer.symbol
         setTimeout(() => {
             let hasMadeAMove = false
             while (!hasMadeAMove) {
@@ -89,10 +98,10 @@ class Game {
                     }
                 }
             }
-            this.activePlayer = this.activePlayer == this.player1 ? this.player2 : this.player1
-            document.querySelector('h2').innerText = `${this.activePlayer}'s turn`
-        }, 2000)
-        this.checkOutcome(symbol)
+            if (this.checkOutcome(symbol)) {return}
+            this.activePlayer = this.activePlayer.name == this.player1.name ? this.player2 : this.player1
+            document.querySelector('h2').innerText = `${this.activePlayer.name}'s turn`
+        }, 2000) 
     }
 
     checkOutcome(symbol) {
@@ -108,7 +117,7 @@ class Game {
     }
 
     gameOver() {
-        document.querySelector('h2').innerText = `${this.activePlayer} wins!`
+        document.querySelector('h2').innerText = `${this.activePlayer.name} wins!`
         document.querySelectorAll('button').forEach(e => e.classList.remove('hidden'))
     }
 
